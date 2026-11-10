@@ -1,0 +1,18 @@
+{
+  "number": 2,
+  "published": "2026-11-10",
+  "note": "Your favourite stays: the incline side plank with the dumbbell press. The suitcase carry is gone, and a bench leg lift for the low back takes its place. Everything works without a mat.",
+  "warmup": [
+    { "id": "standcatcamel" },
+    { "id": "hingedrill" }
+  ],
+  "rounds": 2,
+  "restSeconds": 30,
+  "exercises": [
+    { "id": "rdl" },
+    { "id": "row" },
+    { "id": "deadbugbench" },
+    { "id": "sideplankpress", "dose": "8 presses per side with the 8 lb dumbbell" },
+    { "id": "reversehyper" }
+  ]
+}

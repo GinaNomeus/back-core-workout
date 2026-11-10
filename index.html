@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Back &amp; Core</title>
+<meta name="theme-color" content="#2f6f8f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Back &amp; Core">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1 id="title">Back &amp; Core</h1>
+</header>
+<main id="view"></main>
+<nav class="tabs">
+  <a href="#/" data-tab="home"><span>🏠</span>Today</a>
+  <a href="#/library" data-tab="library"><span>📖</span>Exercises</a>
+</nav>
+<script>window.onerror=function(m,u,l){var d=document.getElementById("err")||document.body.appendChild(Object.assign(document.createElement("pre"),{id:"err"}));d.textContent+=m+" ("+l+")\n";};</script>
+<script src="exercises.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
