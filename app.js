@@ -216,7 +216,8 @@ function feedback() {
       <p class="muted small">Tap the 🎤 on your keyboard to say it out loud.</p>
       <textarea id="notes" placeholder="e.g. The leg lift felt great, I have a mat now…">${esc(s.notes)}</textarea>
     </div>
-    <button class="btn block" id="send">Send to Claude</button>
+    <button class="btn block" id="send">Copy feedback for Claude</button>
+    ${navigator.share ? `<button class="btn ghost block" id="share" style="margin-top:8px">Share… (if Claude is in your share menu)</button>` : ""}
     <div id="out"></div>`;
 
   view.querySelectorAll(".seg").forEach((seg) => seg.addEventListener("click", (ev) => {
@@ -229,7 +230,8 @@ function feedback() {
   view.querySelectorAll(".wt").forEach((inp) => inp.addEventListener("input", () => { s.weights[inp.dataset.id] = inp.value; saveSession(s); }));
   $("#pain").addEventListener("input", (ev) => { s.pain = Number(ev.target.value); $("#pv").textContent = s.pain; saveSession(s); });
   $("#notes").addEventListener("input", (ev) => { s.notes = ev.target.value; saveSession(s); });
-  $("#send").onclick = () => send(s, all);
+  $("#send").onclick = () => send(s, all, false);
+  if ($("#share")) $("#share").onclick = () => send(s, all, true);
 }
 
 function message(s, all) {
@@ -256,23 +258,30 @@ function message(s, all) {
   return lines.join("\n");
 }
 
-async function send(s, all) {
+// Main button: copy the feedback, then paste it into the Claude app.
+// (A web app can't post into another app directly; the share menu is the other way.)
+async function send(s, all, viaShare) {
   const text = message(s, all);
   const out = $("#out");
-  let shared = false;
-  if (navigator.share) {
-    try { await navigator.share({ title: `Workout #${plan.number} feedback`, text }); shared = true; }
+  let how = "copied";
+  if (viaShare && navigator.share) {
+    try { await navigator.share({ title: `Workout #${plan.number} feedback`, text }); how = "shared"; }
     catch (e) { if (e.name === "AbortError") return; }
   }
-  if (!shared) {
-    try { await navigator.clipboard.writeText(text); } catch (e) { /* shown below to copy by hand */ }
+  if (how === "copied") {
+    try { await navigator.clipboard.writeText(text); } catch (e) { how = "manual"; }
   }
   s.sent = true; saveSession(s);
+  const msg = {
+    copied: "<b>Copied!</b> Now open the Claude app, start a chat, paste (press and hold, then Paste) and send.",
+    shared: "<b>Shared.</b> If you picked Claude, just send it there.",
+    manual: "Press and hold the text below, Select All, Copy, then paste it into a chat in the Claude app.",
+  }[how];
   out.innerHTML = `<div class="card">
-    <p><b>${shared ? "Sent." : "Copied!"}</b> ${shared ? "Pick Claude in the share menu if you haven't." :
-      "Open the Claude app, paste it into a chat and send."} Claude saves it to Dremur, and your next workout appears here by the next morning.</p>
+    <p>${msg} Claude saves it to Dremur, and your next workout appears here by the next morning.</p>
     <textarea readonly rows="8">${esc(text)}</textarea>
     <a class="btn light block" href="#/">Back to today</a></div>`;
+  out.scrollIntoView({ behavior: "smooth" });
 }
 
 function library() {

@@ -1,6 +1,6 @@
 // Offline support: the app works in the garage without signal.
 // workout.json is fetched fresh when online, so a new workout shows up right away.
-const CACHE = "bcw-v1";
+const CACHE = "bcw-v2";
 const SHELL = ["./", "index.html", "style.css", "app.js", "exercises.js", "workout.json",
   "manifest.webmanifest", "icons/icon.svg", "icons/icon-180.png", "icons/icon-192.png"];
 
