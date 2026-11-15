@@ -1,18 +1,33 @@
 {
-  "number": 2,
-  "published": "2026-11-10",
-  "note": "Your favourite stays: the incline side plank with the dumbbell press. The suitcase carry is gone, and a bench leg lift for the low back takes its place. Everything works without a mat.",
+  "number": 3,
+  "published": "2026-11-15",
+  "note": "Same five exercises again this week, so you can settle into them. Aim for slower, smoother reps each round: a flat back as you push your hips back in the deadlift, and still, lifted hips as you press in the side plank.",
   "warmup": [
-    { "id": "standcatcamel" },
-    { "id": "hingedrill" }
+    {
+      "id": "standcatcamel"
+    },
+    {
+      "id": "hingedrill"
+    }
   ],
   "rounds": 2,
   "restSeconds": 30,
   "exercises": [
-    { "id": "rdl" },
-    { "id": "row" },
-    { "id": "deadbugbench" },
-    { "id": "sideplankpress", "dose": "8 presses per side with the 8 lb dumbbell" },
-    { "id": "reversehyper" }
+    {
+      "id": "rdl"
+    },
+    {
+      "id": "row"
+    },
+    {
+      "id": "deadbugbench"
+    },
+    {
+      "id": "sideplankpress",
+      "dose": "8 presses per side with the 8 lb dumbbell"
+    },
+    {
+      "id": "reversehyper"
+    }
   ]
 }
