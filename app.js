@@ -95,7 +95,7 @@ function exercisePage(id) {
     <p><a href="javascript:history.back()" class="muted">← Back</a></p>
     ${figure(id)}
     <h2>${esc(e.name)}</h2>
-    <span class="pill">${esc(e.dose)}</span> <span class="tag">${esc(SLOTS[e.slot])}</span>
+    <span class="pill">${esc(e.dose)}</span> <span class="tag">${esc(SLOTS[e.slot] || STRETCH_AREAS[e.area] || "")}</span>
     <ul class="cues">${e.cues.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
     <p class="why">${esc(e.why)}</p>
     <a class="vid" href="${videoUrl(e)}" target="_blank" rel="noopener">▶ Watch videos of this exercise</a>`;
@@ -141,9 +141,8 @@ function renderStep() {
   if (hold) $("#tstart").onclick = () => runHold(secs, e.perSide);
 }
 
-function runHold(secs, perSide) {
+function runHold(secs, perSide, tm = $("#tm"), btn = $("#tstart")) {
   clearTimers();
-  const tm = $("#tm"), btn = $("#tstart");
   btn.disabled = true;
   const phases = perSide ? [["side 1", secs], ["switch sides", 5], ["side 2", secs]] : [["hold", secs]];
   let p = 0, left = phases[0][1];
@@ -298,18 +297,75 @@ function library() {
       <p class="muted">Your likes, pain ratings and history are never stored in this app or on GitHub.</p></div>`;
 }
 
+// ---------- evening stretches ----------
+const WHERE = { floor: "on the floor", couch: "on the couch", standing: "standing" };
+
+function stretchPage() {
+  const key = "bcw.stretch." + new Date().toDateString();
+  let done = {};
+  try { done = JSON.parse(localStorage.getItem(key)) || {}; } catch (e) { done = {}; }
+  Object.keys(localStorage).filter((k) => k.startsWith("bcw.stretch.") && k !== key).forEach((k) => localStorage.removeItem(k));
+  const total = STRETCH_ROUTINE.reduce((n, g) => n + g.ids.length, 0);
+  const card = (id) => {
+    const e = ex(id), hold = e.kind === "hold", secs = e.seconds || 30;
+    return `<div class="card stretch${done[id] ? " done" : ""}" data-id="${id}">
+      ${figure(id)}
+      <div class="row spread" style="margin-top:8px"><h3>${esc(e.name)}</h3>
+        <button class="check${done[id] ? " on" : ""}" aria-label="Done">${done[id] ? "✓" : ""}</button></div>
+      <span class="pill">${esc(e.dose)}</span> <span class="tag">${esc(WHERE[e.where] || "on the floor")}</span>
+      ${hold ? `<div class="timer small-timer">${secs}<small>${e.perSide ? "seconds · side 1" : "seconds"}</small></div>
+        <button class="btn light block tbtn">Start ${secs} s timer${e.perSide ? " (then switch sides)" : ""}</button>` : ""}
+      <ul class="cues">${e.cues.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+      <a class="vid" href="${videoUrl(e)}" target="_blank" rel="noopener">▶ Watch videos</a>
+    </div>`;
+  };
+  view.innerHTML = `
+    <div class="card hero">
+      <div class="row spread"><h2 style="margin:0">Evening stretches</h2><span class="tag">≈10 min</span></div>
+      <p>Gentle stretches for your lower, middle and upper back: on the couch or the floor while you watch TV.
+      Do them in any order, and skip any that don't feel good.</p>
+      <p class="muted small" id="count">${Object.keys(done).length} of ${total} done tonight</p>
+    </div>
+    <div class="card small gentle">
+      <b>When your back hurts</b>
+      <ul class="cues">
+        <li>Move slowly and stretch only to a mild, comfortable pull, never into pain. No bouncing.</li>
+        <li>Breathe out slowly as you settle into each stretch.</li>
+        <li>Stop a stretch if pain gets sharper or runs down a leg.</li>
+        <li>During TV, get up and walk around for a minute every 30–45 minutes. Long sitting stiffens the low back.</li>
+      </ul>
+      <p class="muted">See a doctor if the pain is severe or getting worse, lasts more than a few weeks, or comes with numbness, tingling or weakness in a leg, bladder or bowel changes, or fever.</p>
+    </div>
+    ${STRETCH_ROUTINE.map((g) => `<h2>${esc(STRETCH_AREAS[g.area])}</h2>${g.ids.map(card).join("")}`).join("")}`;
+
+  view.querySelectorAll(".stretch").forEach((c) => {
+    const id = c.dataset.id, e = ex(id);
+    const tb = c.querySelector(".tbtn");
+    if (tb) tb.onclick = () => runHold(e.seconds || 30, e.perSide, c.querySelector(".timer"), tb);
+    c.querySelector(".check").onclick = (ev) => {
+      if (done[id]) delete done[id]; else done[id] = true;
+      localStorage.setItem(key, JSON.stringify(done));
+      c.classList.toggle("done", !!done[id]);
+      ev.currentTarget.classList.toggle("on", !!done[id]);
+      ev.currentTarget.textContent = done[id] ? "✓" : "";
+      $("#count").textContent = `${Object.keys(done).length} of ${total} done tonight`;
+    };
+  });
+}
+
 // ---------- router ----------
 function route() {
   clearTimers();
   document.querySelectorAll(".overlay").forEach((o) => o.remove());
   const h = location.hash || "#/";
-  const tab = h.startsWith("#/library") ? "library" : "home";
+  const tab = h.startsWith("#/library") ? "library" : h.startsWith("#/stretch") ? "stretch" : "home";
   document.querySelectorAll(".tabs a").forEach((a) => a.classList.toggle("on", a.dataset.tab === tab));
   window.scrollTo(0, 0);
   if (h.startsWith("#/go")) return go();
   if (h.startsWith("#/feedback")) return feedback();
   if (h.startsWith("#/ex/")) return exercisePage(h.slice(5));
   if (h.startsWith("#/library")) return library();
+  if (h.startsWith("#/stretch")) { keepAwake(true); return stretchPage(); }
   keepAwake(false);
   home();
 }
