@@ -1,7 +1,7 @@
 {
-  "number": 3,
-  "published": "2026-11-15",
-  "note": "Same five exercises again this week, so you can settle into them. Aim for slower, smoother reps each round: a flat back as you push your hips back in the deadlift, and still, lifted hips as you press in the side plank.",
+  "number": 4,
+  "published": "2026-11-21",
+  "note": "Two new exercises this week: a bent-over reverse fly for the upper back and an incline plank on the bench for the front core. Keep the fly light and slow and squeeze your shoulder blades together at the top. Hold the plank in one straight line from head to heels and keep breathing.",
   "warmup": [
     {
       "id": "standcatcamel"
@@ -17,10 +17,10 @@
       "id": "rdl"
     },
     {
-      "id": "row"
+      "id": "revfly"
     },
     {
-      "id": "deadbugbench"
+      "id": "inclineplank"
     },
     {
       "id": "sideplankpress",
